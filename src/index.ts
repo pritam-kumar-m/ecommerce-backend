@@ -11,6 +11,10 @@ const container = Container.getInstance();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Ecommerce app is running');
+});
+
 // Routes
 app.use('/api/products', container.getProductRoutes().getRouter());
 app.use('/api/categories', container.getCategoryRoutes().getRouter());
@@ -28,7 +32,7 @@ const startServer = async () => {
   try {
     // Connect to database
     await connectToMongo();
-    
+
     // Start listening
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
