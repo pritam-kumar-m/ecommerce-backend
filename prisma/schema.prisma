@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum InventoryOperationType {
+  ADD
+  REMOVE
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Vendor {
+  id          String    @id @default(uuid()) @map("_id")
+  name        String
+  description String?
+  email       String    @unique
+  phone       String?
+  address     Json?
+  website     String?
+  status      VendorStatus @default(ACTIVE)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id              String    @id @default(uuid()) @map("_id")
+  name            String
+  description     String?
+  sku             String    @unique
+  price           Float
+  cost_price      Float
+  retail_price    Float
+  sale_price      Float?
+  categoryId      String
+  vendorId        String?
+  vendor          Vendor?   @relation(fields: [vendorId], references: [id])
+  category        Category  @relation(fields: [categoryId], references: [id])
+  tags            String[]
+  weight          Float?
+  width           Float?
+  height          Float?
+  depth           Float?
+  availability    Boolean   @default(true)
+  custom_fields   Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  inventoryLevel  InventoryLevel?
+  inventoryOperations InventoryOperation[]
+  orderItems      OrderItem[]
+}
+
+// Inventory Models
+model InventoryLevel {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId        String   @unique @db.ObjectId
+  quantity         Int      @default(0)
+  lowStockThreshold Int     @default(0)
+  lastUpdated      DateTime @updatedAt
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventoryLevels")
+}
+
+model InventoryOperation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int
+  type      InventoryOperationType
+  reason    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventoryOperations")
+}
+
+model Order {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String      @db.ObjectId
+  user          User        @relation(fields: [userId], references: [id])
+  status        OrderStatus @default(PENDING)
+  totalAmount   Float
+  shippingAddress Json
+  paymentMethod String
+  paymentStatus String      @default("PENDING")
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orderItems")
+}

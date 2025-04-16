@@ -1,0 +1,25 @@
+{
+    "HTTP_RESPONSE": {
+        "HTTP_SUCCESS": 200,
+        "HTTP_CREATED": 201,
+        "HTTP_NOT_FOUND": 404,
+        "HTTP_ERROR": 401,
+        "HTTP_BAD_REQUEST": 400,
+        "HTTP_FORBIDDEN": 403,
+        "HTTP_BAD_GATEWAY": 502,
+        "HTTP_INTERNAL_SERVER_ERROR": 500,
+        "HTTP_VALIDATION_ERROR": 422,
+        "HTTP_CONFLICT_FOUND": 409
+    },
+    "RESPONSE_SUCCESS": {
+        "TRUE": true,
+        "FALSE": false
+    },
+    "NODEMAILER": {
+        "HOST": "smtp.gmail.com",
+        "PORT": 587,
+        "USERNAME": "indiahitech5@gmail.com",
+        "PASSWORD": "xsukhvvufbkgtxtw",
+        "SECURE,": "SSL"
+    }
+}
