@@ -139,3 +139,90 @@ This project is licensed under the ISC License.
 ## 👥 Authors
 
 [Add author information]
+
+## 🚀 Deployment to fly.io
+
+### Prerequisites
+
+1. Install the Fly CLI:
+```bash
+# For Windows (using PowerShell)
+iwr https://fly.io/install.ps1 -useb | iex
+
+# For macOS
+brew install flyctl
+
+# For Linux
+curl -L https://fly.io/install.sh | sh
+```
+
+2. Sign up and log in to fly.io:
+```bash
+fly auth signup
+# Or if you already have an account
+fly auth login
+```
+
+### Deployment Steps
+
+1. Initialize your fly.io application:
+```bash
+fly launch
+```
+This will create a `fly.toml` configuration file.
+
+2. Configure your application:
+Create a new file named `Dockerfile` in your project root:
+
+```dockerfile
+# Use Node.js v22 as base
+FROM node:22-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build TypeScript
+RUN npm run build
+
+# Expose port
+EXPOSE 8080
+
+# Start the application
+CMD [ "npm", "start" ]
+```
+
+3. Update your `fly.toml` file:
+```toml
+app = "ecommerce-backend"
+primary_region = "sin"  # Singapore region, you can change this to your preferred region
+
+[env]
+  PORT = "8080"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+```

@@ -4,10 +4,19 @@ import { z } from 'zod';
 export const createProductSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   description: z.string().optional(),
+  sku: z.string().optional(),
   price: z.number().positive('Price must be positive'),
-  stock: z.number().int().min(0, 'Stock must be non-negative'),
-  imageUrl: z.string().url('Invalid image URL').optional(),
   categoryId: z.string().min(1, 'Category ID is required'),
+  tags: z.array(z.string()).optional(),
+  sale_price: z.number().positive().optional(),
+  cost_price: z.number().positive().optional(),
+  retail_price: z.number().positive().optional(),
+  weight: z.number().positive().optional(),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+  depth: z.number().positive().optional(),
+  availability: z.boolean().optional(),
+  custom_fields: z.record(z.any()).optional(),
 });
 
 export const updateProductSchema = createProductSchema.partial();

@@ -9,54 +9,54 @@ export class VendorController {
   async createVendor(req: Request, res: Response) {
     try {
       const vendor = await this.vendorService.createVendor(req.body);
-      return ResponseHandler.created(res, 'Vendor created successfully', vendor);
+      return ResponseHandler.created(res, vendor, 'Vendor created successfully');
     } catch (error) {
-      return ResponseHandler.serverError(res, 'Error creating vendor');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 
   async getVendorById(req: Request, res: Response) {
     try {
       const vendor = await this.vendorService.getVendorById(req.params.id);
-      return ResponseHandler.success(res, 'Vendor retrieved successfully', vendor);
+      return ResponseHandler.success(res, vendor, 'Vendor retrieved successfully');
     } catch (error) {
       if (error.message === 'Vendor not found') {
         return ResponseHandler.notFound(res, 'Vendor not found');
       }
-      return ResponseHandler.serverError(res, 'Error retrieving vendor');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 
   async getAllVendors(req: Request, res: Response) {
     try {
       const vendors = await this.vendorService.getAllVendors();
-      return ResponseHandler.success(res, 'Vendors retrieved successfully', vendors);
+      return ResponseHandler.success(res, vendors, 'Vendors retrieved successfully');
     } catch (error) {
-      return ResponseHandler.serverError(res, 'Error retrieving vendors');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 
   async updateVendor(req: Request, res: Response) {
     try {
       const vendor = await this.vendorService.updateVendor(req.params.id, req.body);
-      return ResponseHandler.success(res, 'Vendor updated successfully', vendor);
+      return ResponseHandler.success(res, vendor, 'Vendor updated successfully');
     } catch (error) {
       if (error.message === 'Vendor not found') {
         return ResponseHandler.notFound(res, 'Vendor not found');
       }
-      return ResponseHandler.serverError(res, 'Error updating vendor');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 
   async deleteVendor(req: Request, res: Response) {
     try {
       const vendor = await this.vendorService.deleteVendor(req.params.id);
-      return ResponseHandler.success(res, 'Vendor deleted successfully', vendor);
+      return ResponseHandler.success(res, vendor, 'Vendor deleted successfully');
     } catch (error) {
       if (error.message === 'Vendor not found') {
         return ResponseHandler.notFound(res, 'Vendor not found');
       }
-      return ResponseHandler.serverError(res, 'Error deleting vendor');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 
@@ -67,12 +67,12 @@ export class VendorController {
         return ResponseHandler.badRequest(res, 'Invalid vendor status');
       }
       const vendor = await this.vendorService.updateVendorStatus(req.params.id, status);
-      return ResponseHandler.success(res, 'Vendor status updated successfully', vendor);
+      return ResponseHandler.success(res, vendor, 'Vendor status updated successfully');
     } catch (error) {
       if (error.message === 'Vendor not found') {
         return ResponseHandler.notFound(res, 'Vendor not found');
       }
-      return ResponseHandler.serverError(res, 'Error updating vendor status');
+      return ResponseHandler.error(res, error as Error);
     }
   }
 } 

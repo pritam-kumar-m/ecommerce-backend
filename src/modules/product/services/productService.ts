@@ -6,8 +6,28 @@ const prisma = new PrismaClient();
 class ProductService {
   // Product CRUD operations
   async createProduct(input: CreateProductInput): Promise<Product> {
+    if (!input.name || !input.price || !input.categoryId) {
+      throw new Error('Name, price, and categoryId are required');
+    }
+
     return prisma.product.create({
-      data: input,
+      data: {
+        name: input.name,
+        description: input.description || '',
+        sku: input.sku || `SKU-${Date.now()}`,
+        price: input.price,
+        cost_price: input.cost_price || input.price * 0.7,
+        retail_price: input.retail_price || input.price,
+        sale_price: input.sale_price,
+        categoryId: input.categoryId,
+        tags: input.tags || [],
+        weight: input.weight,
+        width: input.width,
+        height: input.height,
+        depth: input.depth,
+        availability: input.availability ?? true,
+        custom_fields: input.custom_fields
+      },
       include: {
         category: true,
       },
@@ -84,8 +104,15 @@ class ProductService {
 
   // Category CRUD operations
   async createCategory(input: CreateCategoryInput): Promise<Category> {
+    if (!input.name) {
+      throw new Error('Category name is required');
+    }
+
     return prisma.category.create({
-      data: input,
+      data: {
+        name: input.name,
+        description: input.description || '',
+      },
     });
   }
 
