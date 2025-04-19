@@ -22,10 +22,14 @@ const container = container_1.Container.getInstance();
 // Middleware
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.get('/', (req, res) => {
+    res.send('Ecommerce app is running');
+});
 // Routes
 app.use('/api/products', container.getProductRoutes().getRouter());
 app.use('/api/categories', container.getCategoryRoutes().getRouter());
 app.use('/api/auth', container.getAuthRoutes().getRouter());
+app.use('/api/users', container.getUserRoutes().getRouter());
 app.use('/api/inventory', container.getInventoryRoutes().getRouter());
 app.use('/api/orders', container.getOrderRoutes().getRouter());
 app.use('/api/vendors', container.getVendorRoutes().getRouter());

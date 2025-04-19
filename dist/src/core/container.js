@@ -13,6 +13,9 @@ const auth_controller_1 = require("../modules/auth/controllers/auth.controller")
 const product_routes_1 = require("../modules/product/routes/product.routes");
 const category_routes_1 = require("../modules/product/routes/category.routes");
 const auth_routes_1 = require("../modules/auth/routes/auth.routes");
+const user_routes_1 = require("../modules/auth/routes/user.routes");
+const user_controller_1 = require("../modules/auth/controllers/user.controller");
+const user_service_1 = require("../modules/auth/services/user.service");
 const inventory_repository_1 = require("../infrastructure/repositories/inventory.repository");
 const inventory_service_1 = require("../domain/services/inventory.service");
 const inventory_controller_1 = require("../modules/inventory/controllers/inventory.controller");
@@ -27,11 +30,12 @@ const vendor_controller_1 = require("../modules/vendor/controllers/vendor.contro
 const vendor_routes_1 = require("../modules/vendor/routes/vendor.routes");
 class Container {
     constructor() {
+        this.prisma = new client_1.PrismaClient();
+        // Initialize empty objects
         this.repositories = {};
         this.services = {};
         this.controllers = {};
         this.routes = {};
-        this.prisma = new client_1.PrismaClient();
         this.initializeDependencies();
     }
     static getInstance() {
@@ -48,26 +52,35 @@ class Container {
         this.repositories.order = new order_repository_1.OrderRepository(this.prisma);
         this.repositories.vendor = new vendor_repository_1.VendorRepository(this.prisma);
         // Initialize services
-        this.services.product = new product_service_1.ProductService(this.repositories.product, this.repositories.category);
-        this.services.category = new category_service_1.CategoryService(this.repositories.category);
-        this.services.auth = new auth_service_1.AuthService(this.prisma);
-        this.services.inventory = new inventory_service_1.InventoryService(this.repositories.inventory);
-        this.services.order = new order_service_1.OrderService(this.repositories.order, this.repositories.product, this.repositories.inventory);
-        this.services.vendor = new vendor_service_1.VendorService(this.repositories.vendor);
+        this.services = {
+            product: new product_service_1.ProductService(this.repositories.product, this.repositories.category),
+            category: new category_service_1.CategoryService(this.repositories.category),
+            auth: new auth_service_1.AuthService(this.prisma),
+            inventory: new inventory_service_1.InventoryService(this.repositories.inventory),
+            order: new order_service_1.OrderService(this.repositories.order, this.repositories.product, this.repositories.inventory),
+            vendor: new vendor_service_1.VendorService(this.repositories.vendor),
+            user: new user_service_1.UserService(),
+        };
         // Initialize controllers
-        this.controllers.product = new product_controller_1.ProductController(this.services.product);
-        this.controllers.category = new category_controller_1.CategoryController(this.services.category);
-        this.controllers.auth = new auth_controller_1.AuthController(this.services.auth);
-        this.controllers.inventory = new inventory_controller_1.InventoryController(this.services.inventory);
-        this.controllers.order = new order_controller_1.OrderController(this.services.order);
-        this.controllers.vendor = new vendor_controller_1.VendorController(this.services.vendor);
+        this.controllers = {
+            product: new product_controller_1.ProductController(this.services.product),
+            category: new category_controller_1.CategoryController(this.services.category),
+            auth: new auth_controller_1.AuthController(this.services.auth),
+            inventory: new inventory_controller_1.InventoryController(this.services.inventory),
+            order: new order_controller_1.OrderController(this.services.order),
+            vendor: new vendor_controller_1.VendorController(this.services.vendor),
+            user: new user_controller_1.UserController(this.services.user),
+        };
         // Initialize routes
-        this.routes.product = new product_routes_1.ProductRoutes(this.controllers.product);
-        this.routes.category = new category_routes_1.CategoryRoutes(this.controllers.category);
-        this.routes.auth = new auth_routes_1.AuthRoutes(this.controllers.auth);
-        this.routes.inventory = new inventory_routes_1.InventoryRoutes(this.controllers.inventory);
-        this.routes.order = new order_routes_1.OrderRoutes(this.controllers.order);
-        this.routes.vendor = new vendor_routes_1.VendorRoutes(this.controllers.vendor);
+        this.routes = {
+            product: new product_routes_1.ProductRoutes(this.controllers.product),
+            category: new category_routes_1.CategoryRoutes(this.controllers.category),
+            auth: new auth_routes_1.AuthRoutes(this.controllers.auth),
+            inventory: new inventory_routes_1.InventoryRoutes(this.controllers.inventory),
+            order: new order_routes_1.OrderRoutes(this.controllers.order),
+            vendor: new vendor_routes_1.VendorRoutes(this.controllers.vendor),
+            user: new user_routes_1.UserRoutes(this.controllers.user),
+        };
     }
     getPrisma() {
         return this.prisma;
@@ -131,6 +144,9 @@ class Container {
     }
     getVendorRoutes() {
         return this.routes.vendor;
+    }
+    getUserRoutes() {
+        return this.routes.user;
     }
 }
 exports.Container = Container;

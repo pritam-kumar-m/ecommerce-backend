@@ -35,6 +35,7 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UserFilter = z.infer<typeof userFilterSchema>;
+export type RegisterInput = CreateUserInput;
 
 export interface AuthTokens {
   accessToken: string;
