@@ -66,6 +66,7 @@ model Vendor {
   updatedAt   DateTime  @updatedAt
 }
 
+
 model Product {
   id              String    @id @default(uuid()) @map("_id")
   name            String

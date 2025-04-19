@@ -226,3 +226,5 @@ primary_region = "sin"  # Singapore region, you can change this to your preferre
   cpus = 1
   memory_mb = 1024
 ```
+
+url :https://ecommerce-backend-production-f533.up.railway.app/

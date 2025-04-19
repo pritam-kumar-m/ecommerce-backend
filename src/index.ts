@@ -19,9 +19,11 @@ app.get('/', (req, res) => {
 app.use('/api/products', container.getProductRoutes().getRouter());
 app.use('/api/categories', container.getCategoryRoutes().getRouter());
 app.use('/api/auth', container.getAuthRoutes().getRouter());
+app.use('/api/users', container.getUserRoutes().getRouter());
 app.use('/api/inventory', container.getInventoryRoutes().getRouter());
 app.use('/api/orders', container.getOrderRoutes().getRouter());
 app.use('/api/vendors', container.getVendorRoutes().getRouter());
+
 // Error handling
 app.use(ErrorHandler);
 
