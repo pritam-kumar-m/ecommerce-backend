@@ -6,7 +6,7 @@ import { ErrorHandler } from './infrastructure/middleware/errorHandler';
 
 const app = express();
 const container = Container.getInstance();
-
+console.log("data-------------------")
 // Middleware
 app.use(cors());
 app.use(express.json());
